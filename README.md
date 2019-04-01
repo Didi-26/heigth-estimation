@@ -143,4 +143,3 @@ Applying the --cv argument when running the code means that you want to compute 
 1. When I run the code using --cv 1, I get the error "no module named cv2". What can I do?
 
 You should create a new conda environment and reinstall everything except matplotlib. Then you need to rerun the code but this time using the argument "--matplotlib 0" to deactivate the use of the matplotlib library. Note that if this is still not working, redo the same but install opencv using "conda install -c conda-forge opencv".
-
