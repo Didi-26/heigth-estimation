@@ -37,7 +37,7 @@ Since the jsonfile is already provided you can directly launch:
 
 You should get the following output in the console:
 
-_Decomposition of the json file into multiple json files in the directory Jsonfiles _
+_Decomposition of the json file into multiple json files in the directory Jsonfiles_
 
 _rm: cannot remove 'JsonFiles/': No such file or directory
 Decomposition done successfuly_
