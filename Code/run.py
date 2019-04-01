@@ -61,8 +61,6 @@ def main():
 
     if (not args["video"] and args["json"] == "0"):
         ap.error("Not enough arguments: --video is required")
-    #if (args["json"] != "1" and args["json"] != "0"):
-    #    ap.error("You must either type 1 or 0 for the argument --json")
     if (args["video"] and args["json"] != "0"):
         warnings.warn("Warning: you used the argument --video and --json together. The first one will be ignored!")
     if (args["cv"] != None and args["cv"] != "1" and args["cv"] != "0"):
@@ -102,13 +100,10 @@ def main():
                 print("You needed to specify either 0, 1, or 2 for the argument --correction. The correction ratio for the adults will be used.")
         except:
             print("You didn't use an integer for the argument --correction. The correction ratio for the adults will be used.")
-
-
     if (args["ratio"] != None):
         try:
             real_ratio = float(args["ratio"])
         except:
-
             print("You didn't use a float for the argument --ratio. This ratio will be ignore.")
     if (args["height"] != None):
         try:
@@ -174,14 +169,13 @@ def main():
         vprint("The different arrays are ready \n")
 
 
-
         vprint("Computing the acceleration in pixels \n")
+
+        """ Three method: floor, minimum-maximum, difference"""
         if (method == 0):
             index_fly,good_values = compute_acceleration_floor_method(-position_center_mass_y,jump)
-
         elif (method == 1):
             index_fly,good_values = compute_acceleration_minimum_method(-position_center_mass_y,randsac,jump)
-
         else:
             max_interval,index_floor_before_jump,index_floor_after_jump= compute_acceleration_diff(-position_center_mass_y,0,jump)
 
@@ -199,26 +193,22 @@ def main():
             correction_factor = compute_median_ratio(output)
             vprint("Computing the correction term done successfuly \n")
         else:
-
             vprint("Using the precomputed correction term \n")
             if (correction_factor_choose == 1):
                 correction_factor = 1.2234304709 #children
             elif (correction_factor_choose == 2):
                 correction_factor = 1.18160518463 #all
-        # Add a parameter to select the range for computing the size in pixel
+
         size_in_pixel_before_correction = np.median(size_person[range_size])
         size_in_pixel = size_in_pixel_before_correction*correction_factor
 
         if (method == 0 or method == 1):
             computed_ratio = np.median((1/2)*g/abs(polynomial_fit[0]/(frame_size**2)))
-
         else:
             time_flight_after = frame_size*(abs(index_floor_after_jump-max_interval))
             fall_meter_after = (1/2)*g*pow(time_flight_after,2) #Height of the fall in meters
             fall_pixel_after = (abs(position_center_mass_y[max_interval]-position_center_mass_y[index_floor_after_jump]))
             computed_ratio = fall_meter_after*(1/fall_pixel_after)
-
-        # Display the curve of acceleration
 
         if (real_ratio != 0):
             print("Real ratio: " +str(real_ratio))
@@ -227,9 +217,9 @@ def main():
 
         vprint("Computing the acceleration in pixel done successfuly \n")
 
-
         estimated_height_cm = round(size_m,4)*100
 
+        """Plotting of the curve fitting"""
         if (matplot_use and (method== 0 or method == 1)):
             import matplotlib.pyplot as plt
             plt.scatter(range(len(position_center_mass_y)),1080-position_center_mass_y,s=1,label="Trajectory")
@@ -247,7 +237,6 @@ def main():
             print("The difference between the sizes is "+str(((real_height-estimated_height_cm))))
             print("The difference between the sizes is "+str(round(100*abs(real_height-estimated_height_cm)/real_height,2))+" %")
 
-        # more info in verbose
 
 if (__name__ == "__main__"):
     main()

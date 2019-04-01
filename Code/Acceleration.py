@@ -25,28 +25,30 @@ def compute_acceleration_floor_method(position,jump_number=0):
     index_floor_before_jump = 0
     index_floor_after_jump = 0
 
+    # Keep only the indices that are correctly detected with Alphapose
     indices_kept_pos = []
-
     for index1 in range(0,len(position)):
         for index2 in good_values[0]:
             if index1==index2:
                 indices_kept_pos.append(index1)
-    # Add comment describing what I do
+
+    """ Select the range 0:30 floor the floor position and find the maximum in the trajectory
+     Compute the distance from floor to maximum """
     indices_values = 30
     floor = np.median(position[0:indices_values][np.where(np.array(indices_kept_pos)<indices_values)])
 
     total_max_index = scipy.signal.argrelmax(position[indices_kept_pos],order = len(position))[0] # Global maxium
 
-
     total_max_value = position[total_max_index]
     distance_floor_max = abs(total_max_value-floor)
 
+    """ The threshold is useful to select the floor indices even if there is noise"""
     threshold = 0.15*distance_floor_max
     index_floor = np.where((position > floor-threshold) & (position < floor+threshold))[0]
 
     position[index_floor] = floor
 
-    jump_positions = scipy.signal.argrelmax(position[indices_kept_pos],order = 10)[0] # This is the position of the jumps
+    jump_positions = scipy.signal.argrelmax(position[indices_kept_pos],order = 10)[0]
     min_positions = scipy.signal.argrelmax(-position[indices_kept_pos],order = 10)[0]
 
 
@@ -76,6 +78,7 @@ def compute_curve(position,index_fly,good_values,RANDSAC):
             if index1==index2:
                 indices_kept.append(index1)
 
+    # Polynomial fit with or without randsac
     if (RANDSAC):
         polynomial_fit = polyrandsac(indices_kept,position[indices_kept],int(len(position[indices_kept])-3),RANDSAC,degree = 2)
     else:
@@ -100,23 +103,26 @@ def compute_acceleration_minimum_method(position,RANDSAC=0,jump_number=0):
     index_floor_before_jump = 0
     index_floor_after_jump = 0
 
+    # Keep only the indices that are correctly detected with Alphapose
     indices_kept_pos = []
-
     for index1 in range(0,len(position)):
         for index2 in good_values[0]:
             if index1==index2:
                 indices_kept_pos.append(index1)
 
+    #Select the range 0:30 floor the floor position
     indices_values = 30
     floor = np.median(position[0:indices_values][np.where(np.array(indices_kept_pos)<indices_values)])
 
     total_max_index = scipy.signal.argrelmax(position[indices_kept_pos],order = len(position))[0] # Global maxium
+
 
     max_min_triples = []
     positions_good = position
     maxima = scipy.signal.argrelmax(positions_good,order = 10)[0]
     minima = scipy.signal.argrelmax(-positions_good,order = 5, mode= "wrap")[0]
 
+    # Select the triplets [index before jump,maximum,index after jump]
     for ma in maxima:
         if ma > minima[0]:
             indexLastBefore = minima[np.where(minima<ma)[0][-1]]
@@ -128,6 +134,7 @@ def compute_acceleration_minimum_method(position,RANDSAC=0,jump_number=0):
     max_height = max(heights)
     max_min_triples = np.array(max_min_triples)
 
+    # Remove too small jumps
     minimal_relative_jump_height = 0.5
     flight_phase_ratio = 0.5
     high_jump_indices = np.where(heights > max_height*minimal_relative_jump_height)[0]
@@ -138,13 +145,14 @@ def compute_acceleration_minimum_method(position,RANDSAC=0,jump_number=0):
     height = max(abs(positions_good[max_peak]-positions_good[left]), abs(positions_good[max_peak]-positions_good[right]))
     height_treshold = positions_good[max_peak] - flight_phase_ratio*height
 
+    # Get the frames range that respect the different thresholds
     candidate_frames = np.where(positions_good[range(left, right)] > height_treshold)[0]
 
     index_floor_before_jump, index_floor_after_jump = left+candidate_frames[0], left+candidate_frames[-1]
 
 
 
-    # We can now fit a polynom of degree two to the curve.
+    # We get the fly indices
     index_fly = range(index_floor_before_jump,index_floor_after_jump+1)
 
     return index_fly,good_values
@@ -174,7 +182,7 @@ def compute_acceleration_diff(position,RANDSAC=0,jump_number=0):
             if index1==index2:
                 indices_kept_pos.append(index1)
 
-
+    # Find the floor value and compute the indices of the floor
     indices_values = 100
     floor = np.median(position[0:indices_values][np.where(np.array(indices_kept_pos)<indices_values)])
 
@@ -184,6 +192,7 @@ def compute_acceleration_diff(position,RANDSAC=0,jump_number=0):
     total_max_value = position[total_max_index]
     distance_floor_max = abs(total_max_value-floor)
 
+    # Create a threshold based on the distance from floor to maximum to remove "jumps" that are only noise
     threshold = 0.15*distance_floor_max
     index_floor = np.where((position > floor-threshold) & (position < floor+threshold))[0]
 
