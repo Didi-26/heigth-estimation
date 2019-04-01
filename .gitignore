@@ -106,3 +106,4 @@ venv.bak/
 # ignore the directories creates during execution
 example/JsonFiles/
 example/Trajectory/
+example/PhotosFromVideo/
