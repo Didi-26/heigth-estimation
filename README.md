@@ -2,7 +2,7 @@
 
 ## Purpose of the program
 
-This program estimates the height based on a video. In the video, the person is jumping in front of the camera. This height is computed by comparing the gravitational constant g = 9.81 with the acceleration of the person in the video. The detection of the person in the video is done using Alphapose.
+This program estimates the height based on a video. In the video, the person is jumping in front of the camera. This height is computed by comparing the gravitational constant g = 9.81 with the acceleration of the person in the video.  The detection of the person in the video is done using Alphapose.
 
 ## Setup
 0. Install anaconda3 (see [Anaconda](https://www.anaconda.com/download/#linux))
@@ -27,11 +27,9 @@ Note 2: In order to install opencv, you can directly do: **pip install opencv-py
 ***
 ## Example
 
-Add a png of an example
-
 Here is a small example to test the code. Every datas are saved in the directory "example".
 
-First go to the directory "example"
+First go to the directory "example". You will find every data needed to fully run the code. The json file generated correspond to the video provided in the directory.
 
 Since the jsonfile is already provided you can directly launch:
 
@@ -59,7 +57,9 @@ _Using the precomputed correction term_
 
 _Computing the acceleration in pixel done successfuly_
 
+
 And you should get the image
+
  ![trajectory](figure_example.png)
 
 When closing this figure, you get the estimated size in the console
