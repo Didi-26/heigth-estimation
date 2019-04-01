@@ -39,7 +39,7 @@ Since the jsonfile is already provided you can directly launch:
 
 You should get the following output in the console:
 
-_Decomposition of the json file into multiple json files in the directory Jsonfiles _
+_Decomposition of the json file into multiple json files in the directory Jsonfiles_
 
 _rm: cannot remove 'JsonFiles/': No such file or directory
 Decomposition done successfuly_
@@ -60,6 +60,7 @@ _Using the precomputed correction term_
 _Computing the acceleration in pixel done successfuly_
 
 And you should get the image
+
  ![trajectory](figure_example.png)
 
 When closing this figure, you get the estimated size in the console
